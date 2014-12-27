@@ -12,16 +12,25 @@ import com.wilson.common.IndexInfo;
 import com.wilson.common.PageInfo;
 
 public class KeywordSearcher {
-	private final static int INDEX_DATA_COUNT = 3;
-	private final static int BBS_DADA_COUNT = 1;
+	private final static int INDEX_DATA_COUNT = 10;
+	private final static int BBS_DADA_COUNT = 10;
 
-	private final static String INDEX_INDEX_PATH = "WebContent/WEB-INF/data/index.index";
-	private final static String INDEX_DATA_PREFIX = "WebContent/WEB-INF/data/index/part-";
+	private final static int MAX_RESULT_COUNT = 20;
 
-	private final static String BBS_INDEX_PATH = "WebContent/WEB-INF/data/bbs.index";
-	private final static String BBS_DATA_PREFIX = "WebContent/WEB-INF/data/bbs/bbs-";
+	private String INDEX_INDEX_PATH = "/index.index";
+	private String INDEX_DATA_PREFIX = "/index/part-";
 
-	private final static DecimalFormat formatter = new DecimalFormat("00000");
+	private String BBS_INDEX_PATH = "/bbs.index";
+	private String BBS_DATA_PREFIX = "/bbs/part-";
+
+	private DecimalFormat formatter = new DecimalFormat("00000");
+
+	public KeywordSearcher(String baseDir) {
+		INDEX_INDEX_PATH = baseDir.concat(INDEX_INDEX_PATH);
+		INDEX_DATA_PREFIX = baseDir.concat(INDEX_DATA_PREFIX);
+		BBS_INDEX_PATH = baseDir.concat(BBS_INDEX_PATH);
+		BBS_DATA_PREFIX = baseDir.concat(BBS_DATA_PREFIX);
+	}
 
 	public List<SearchResult> search(String keyword) throws IOException {
 		List<SearchResult> result = new ArrayList<>();
@@ -32,7 +41,8 @@ public class KeywordSearcher {
 
 		List<IndexInfo> indexInfoList = getIndexInfo(keyword);
 
-		for (IndexInfo indexInfo : indexInfoList) {
+		for (int i = 0; i < MAX_RESULT_COUNT && i < indexInfoList.size(); i++) {
+			IndexInfo indexInfo = indexInfoList.get(i);
 			PageInfo pageInfo = getPageInfo(indexInfo.getUrl());
 
 			SearchResult searchResult = new SearchResult();
@@ -79,7 +89,7 @@ public class KeywordSearcher {
 	}
 
 	private String getFilePath(String prefix, int totalFiles, String key) {
-		String name = formatter.format(key.hashCode() % totalFiles);
+		String name = formatter.format((key.hashCode() & Integer.MAX_VALUE) % totalFiles);
 		return prefix.concat(name);
 	}
 

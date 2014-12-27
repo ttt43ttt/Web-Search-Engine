@@ -147,11 +147,11 @@ public class InvertedIndexingJob {
 		conf.setCombinerClass(Reduce.class);
 		conf.setReducerClass(Reduce.class);
 
-		conf.setPartitionerClass(KeyWordPartitioner.class);
-		conf.setNumReduceTasks(3);
-
 		conf.setInputFormat(TextInputFormat.class);
 		conf.setOutputFormat(TextOutputFormat.class);
+
+		conf.setPartitionerClass(KeyWordPartitioner.class);
+		conf.setNumReduceTasks(10);
 
 		FileInputFormat.setInputPaths(conf, new Path(args[0]));
 		FileOutputFormat.setOutputPath(conf, new Path(args[1]));

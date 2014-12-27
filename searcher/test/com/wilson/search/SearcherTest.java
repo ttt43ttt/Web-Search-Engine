@@ -12,7 +12,7 @@ import com.wilson.common.PageInfo;
 public class SearcherTest {
 	@Test
 	public void test() throws IOException {
-		KeywordSearcher searcher = new KeywordSearcher();
+		KeywordSearcher searcher = new KeywordSearcher("WebContent/WEB-INF/data");
 		List<SearchResult> result = searcher.search("±±¾©");
 		System.out.println(result.size());
 

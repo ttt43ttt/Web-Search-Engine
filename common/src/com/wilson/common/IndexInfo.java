@@ -12,7 +12,7 @@ public class IndexInfo {
 	private List<Integer> positions;
 
 	public static List<IndexInfo> parse(String line) {
-		List<IndexInfo> result = new ArrayList<>();
+		List<IndexInfo> result = new ArrayList<IndexInfo>();
 
 		if (line == null || line.isEmpty()) {
 			return result;
@@ -45,7 +45,7 @@ public class IndexInfo {
 	}
 
 	public IndexInfo() {
-		positions = new ArrayList<>();
+		positions = new ArrayList<Integer>();
 	}
 
 	@Override
@@ -85,5 +85,9 @@ public class IndexInfo {
 
 	public void addPosition(int position) {
 		positions.add(position);
+	}
+
+	public List<Integer> getPositions() {
+		return positions;
 	}
 }
