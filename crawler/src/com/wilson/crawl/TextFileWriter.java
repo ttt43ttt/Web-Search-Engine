@@ -1,8 +1,9 @@
 package com.wilson.crawl;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public class TextFileWriter {
 
 	private TextFileWriter(String fileName) throws IOException {
 		// this.fileName = fileName;
-		this.writer = new BufferedWriter(new FileWriter(fileName, true));
+		this.writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, true), "UTF-8"));
 	}
 
 	public synchronized void appendLine(String content) throws IOException {
