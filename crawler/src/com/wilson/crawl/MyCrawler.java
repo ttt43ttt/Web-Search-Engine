@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.jsoup.nodes.Document;
 
+import com.wilson.common.PageInfo;
+
 import cn.edu.hfut.dmic.webcollector.crawler.BreadthCrawler;
 import cn.edu.hfut.dmic.webcollector.model.Page;
 
@@ -25,7 +27,7 @@ public class MyCrawler extends BreadthCrawler {
 
 		// ±êÌâ
 		String title = doc.title();
-		
+
 		// ÄÚÈÝ
 		String content = doc.text();
 
@@ -47,24 +49,18 @@ public class MyCrawler extends BreadthCrawler {
 			return;
 		}
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(url);
-		sb.append('\t');
-		sb.append(title);
-		sb.append('\t');
-		sb.append(author);
-		sb.append('\t');
-		sb.append(time);
-		sb.append('\t');
-		sb.append(ip);
-		sb.append('\t');
-		sb.append(content.replace('\r', '\0').replace('\n', ' '));
+		PageInfo info = new PageInfo();
+		info.setUrl(url);
+		info.setTitle(title);
+		info.setAuthor(author);
+		info.setTime(time);
+		info.setIp(ip);
+		info.setContent(content);
 
-		TextFileWriter writer;
+		String line = info.toString();
 
 		try {
-			writer = getWriter();
-			writer.appendLine(sb.toString());
+			getWriter().appendLine(line);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

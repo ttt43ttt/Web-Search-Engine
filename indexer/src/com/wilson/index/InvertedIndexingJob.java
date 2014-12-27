@@ -10,29 +10,27 @@ import org.apache.hadoop.mapred.*;
 import org.apache.hadoop.mapred.lib.HashPartitioner;
 import org.wltea.analyzer.core.Lexeme;
 
+import com.wilson.common.PageInfo;
 import com.wilson.segment.TextSegmenter;
 
-public class IndexingJob {
+public class InvertedIndexingJob {
 
 	public static class Map extends MapReduceBase implements Mapper<LongWritable, Text, Text, Text> {
 		private Text word = new Text();
-		private Text info = new Text();
+		private Text index = new Text();
 
 		public void map(LongWritable key, Text value, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
 			String line = value.toString();
 
 			// parse line
-			String[] fields = parseLine(line);
-			if (fields.length < 6) {
-				return;
-			}
+			PageInfo info = PageInfo.parse(line);
 
-			String url = fields[0];
-			String title = fields[1];
+			String url = info.getUrl();
+			String title = info.getTitle();
 			// String author = fields[2];
 			// String time = fields[3];
 			// String ip = fields[4];
-			String content = fields[5];
+			String content = info.getContent();
 
 			if (url == null || title == null || content == null) {
 				return;
@@ -55,34 +53,13 @@ public class IndexingJob {
 					sb.append(';');
 					sb.append(lexeme.getBeginPosition());
 
-					info.set(sb.toString());
+					index.set(sb.toString());
 
 					// collect
-					output.collect(word, info);
+					output.collect(word, index);
 					// System.out.println("map: " + word.toString() + " " + info.toString());
 				}
 			}
-		}
-
-		private String[] parseLine(String line) {
-			String[] fields = new String[6];
-			char delimiter = '\t';
-			int start = 0, end = 0;
-
-			for (int i = 0; i < fields.length - 1; i++) {
-				end = line.indexOf(delimiter, start);
-
-				if (end > start) {
-					fields[i] = line.substring(start, end);
-					start = end + 1;
-				} else {
-					break;
-				}
-			}
-
-			fields[fields.length - 1] = line.substring(start);
-
-			return fields;
 		}
 	}
 
@@ -150,9 +127,18 @@ public class IndexingJob {
 		}
 	}
 
+	public static class KeyWordPartitioner extends HashPartitioner<Text, Text> {
+
+		@Override
+		public int getPartition(Text key, Text value, int numReduceTasks) {
+			return (key.toString().hashCode() & Integer.MAX_VALUE) % numReduceTasks;
+		}
+
+	}
+
 	public static void main(String[] args) throws Exception {
-		JobConf conf = new JobConf(IndexingJob.class);
-		conf.setJobName("indexing");
+		JobConf conf = new JobConf(InvertedIndexingJob.class);
+		conf.setJobName("InvertedIndexingJob");
 
 		conf.setOutputKeyClass(Text.class);
 		conf.setOutputValueClass(Text.class);
@@ -161,7 +147,7 @@ public class IndexingJob {
 		conf.setCombinerClass(Reduce.class);
 		conf.setReducerClass(Reduce.class);
 
-		conf.setPartitionerClass(HashPartitioner.class);
+		conf.setPartitionerClass(KeyWordPartitioner.class);
 		conf.setNumReduceTasks(3);
 
 		conf.setInputFormat(TextInputFormat.class);
