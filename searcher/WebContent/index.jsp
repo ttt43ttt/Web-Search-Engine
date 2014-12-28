@@ -7,19 +7,54 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>SJTU BBS Search Engine</title>
+<style type="text/css">
+.search-box {
+	width: 800px;
+	height: 80px;
+}
+
+#kw {
+	font-size: 1em;
+	width: 500px;
+	height: 30px;
+	position: relative;
+	bottom: 13px;
+}
+
+#search {
+	font-size: 1em;
+	width: 60px;
+	height: 35px;
+	border: 0px;
+	color: white;
+	background: #3385ff;
+	position: relative;
+	bottom: 13px;
+}
+</style>
 <script type="text/javascript" src="jquery-2.1.3.min.js"></script>
 <script type="text/javascript">
 	$(function() {
-		$('#search').on('click', function() {
+		function search() {
 			var kw = $('#kw').val();
 			window.location.href = 's?kw=' + kw;
+		}
+
+		$('#search').on('click', function() {
+			search();
+		});
+
+		$('#kw').on('keyup', function(event) {
+			if (event.keyCode == 13) {
+				search();
+			}
 		});
 	});
 </script>
 </head>
 <body>
-	<div>
-		<input id="kw" type="text"
+	<div class="search-box">
+		<a href="<%=request.getContextPath()%>"><img alt="Logo" src="logo.jpg"></a> <input id="kw" type="text"
 			value="<%String kw = (String) request.getAttribute("kw");
 			if (kw != null) {
 				out.print(kw);
@@ -37,6 +72,10 @@
 		<div>
 			<div>
 				<a target="_blank" href="<%=pageInfo.getUrl()%>"><%=pageInfo.getTitle()%></a>
+			</div>
+			<div>
+				<small>用户： <span><%=pageInfo.getAuthor()%></span> &nbsp;-&nbsp;时间： <span><%=pageInfo.getTime()%></span>
+					&nbsp;-&nbsp;IP： <span><%=pageInfo.getIp()%></span></small>
 			</div>
 			<div>
 				<%
@@ -63,6 +102,7 @@
 							}
 				%>
 			</div>
+			<br />
 		</div>
 		<%
 			}
