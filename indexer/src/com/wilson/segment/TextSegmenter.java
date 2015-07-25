@@ -19,7 +19,7 @@ public class TextSegmenter {
 		
 		StringReader input = new StringReader(content.trim());
 
-		// trueÖÇÄÜ·Ö´Ê£¬falseÏ¸Á£¶È
+		// trueæ™ºèƒ½åˆ†è¯ï¼Œfalseç»†ç²’åº¦
 		IKSegmenter ikSeg = new IKSegmenter(input, false);
 		Lexeme lexeme;
 
